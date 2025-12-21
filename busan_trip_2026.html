@@ -1,0 +1,803 @@
+
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>釜山・慶州 8日行程｜2026/6/21–6/28</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --text:#e9eefc;
+      --muted:#a9b4d6;
+      --line:rgba(255,255,255,.12);
+      --accent:#7aa7ff;
+      --good:#61d095;
+      --warn:#ffcc66;
+      --bad:#ff7a7a;
+      --chip:rgba(122,167,255,.15);
+      --shadow: 0 14px 40px rgba(0,0,0,.35);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+      "PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+      background: radial-gradient(1200px 600px at 20% -10%, rgba(122,167,255,.25), transparent 55%),
+                  radial-gradient(900px 500px at 100% 0%, rgba(97,208,149,.18), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+    }
+    header{padding:26px 18px 10px; max-width:1080px; margin:0 auto;}
+    h1{margin:0; font-size:22px; letter-spacing:.3px}
+    .sub{color:var(--muted); margin-top:6px; line-height:1.5}
+    .chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px}
+    .chip{padding:7px 10px; border:1px solid var(--line); background:var(--chip); border-radius:999px; font-size:12px;}
+    .title{display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap; justify-content:space-between;}
+    .tabs{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+    .tab{
+      padding:10px 12px; border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      cursor:pointer; user-select:none;
+      font-size:13px;
+    }
+    .tab.active{
+      border-color: rgba(122,167,255,.55);
+      background: rgba(122,167,255,.16);
+      font-weight:700;
+    }
+    .toggleRow{display:flex; gap:10px; flex-wrap:wrap}
+    .btn{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 12px; border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      cursor:pointer;
+      user-select:none;
+    }
+    .btn:hover{background: rgba(255,255,255,.07)}
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{border-color: rgba(122,167,255,.45); background: rgba(122,167,255,.12)}
+    .btn.good{border-color: rgba(97,208,149,.45); background: rgba(97,208,149,.12)}
+    .btn.bad{border-color: rgba(255,122,122,.45); background: rgba(255,122,122,.12)}
+
+    main{max-width:1080px; margin:0 auto; padding:16px 18px 40px}
+    .page{display:none}
+    .page.active{display:block}
+
+    .grid{display:grid; gap:14px; grid-template-columns: 1.1fr .9fr; align-items:start;}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card h2{
+      margin:0; font-size:16px; padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .card .body{padding:14px 16px}
+
+    details{border-top:1px solid var(--line); background: rgba(0,0,0,.12);}
+    summary{list-style:none; cursor:pointer; padding:14px 16px; display:flex; gap:12px; align-items:flex-start;}
+    summary::-webkit-details-marker{display:none}
+    .dayBadge{
+      width:48px; height:48px; border-radius:14px;
+      display:grid; place-items:center;
+      border:1px solid var(--line);
+      background: rgba(122,167,255,.14);
+      font-weight:700;
+      flex:0 0 auto;
+    }
+    .dayTitle{font-weight:700; margin:0}
+    .dayMeta{margin-top:4px; color:var(--muted); font-size:12px}
+    .pillRow{display:flex; gap:8px; flex-wrap:wrap; margin-top:6px}
+    .pill{
+      font-size:12px; padding:6px 10px; border-radius:999px;
+      border:1px solid var(--line); background: rgba(255,255,255,.04);
+      color: var(--text);
+    }
+    .pill.good{border-color: rgba(97,208,149,.35); background: rgba(97,208,149,.10)}
+    .pill.warn{border-color: rgba(255,204,102,.35); background: rgba(255,204,102,.10)}
+    .dayBody{padding:0 16px 16px; display:grid; gap:10px;}
+    .bullets{margin:0; padding-left:18px; line-height:1.6}
+    .notice{
+      border-left:3px solid rgba(255,204,102,.8);
+      padding:10px 12px; border-radius:14px;
+      background: rgba(255,204,102,.08);
+      line-height:1.6;
+    }
+    .ok{border-left-color: rgba(97,208,149,.85); background: rgba(97,208,149,.08);}
+    .danger{border-left-color: rgba(255,122,122,.85); background: rgba(255,122,122,.08);}
+    .muted{color:var(--muted)}
+    .small{font-size:12px}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace}
+    .sep{height:1px; background:var(--line); margin:12px 0}
+    .twoCol{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width: 740px){ .twoCol{grid-template-columns:1fr} }
+    .kvs{display:grid; gap:10px; grid-template-columns: 1fr 1fr;}
+    @media (max-width: 520px){ .kvs{grid-template-columns:1fr} }
+    .kv{padding:12px; border:1px solid var(--line); border-radius:14px; background: rgba(0,0,0,.18);}
+    .kv .k{font-size:12px; color:var(--muted)}
+    .kv .v{margin-top:6px; font-size:14px; line-height:1.35}
+
+    table{
+      width:100%; border-collapse:collapse; overflow:hidden;
+      border-radius:14px; border:1px solid var(--line);
+      background: rgba(0,0,0,.16);
+    }
+    th,td{padding:10px 10px; border-bottom:1px solid var(--line); text-align:left; font-size:13px; vertical-align:top}
+    th{color:var(--muted); font-weight:600}
+    tr:last-child td{border-bottom:none}
+    .right{text-align:right}
+    .center{text-align:center}
+    .nowrap{white-space:nowrap}
+
+    /* Inputs */
+    input, select, textarea{
+      width:100%;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      outline:none;
+      font-size:13px;
+    }
+    textarea{min-height:80px; resize:vertical}
+    .expense-grid{display:grid; gap:12px; grid-template-columns: 1.1fr .9fr; align-items:start;}
+    @media (max-width: 980px){ .expense-grid{grid-template-columns:1fr} }
+    .foot{padding:14px 16px; border-top:1px solid var(--line); color:var(--muted); font-size:12px;}
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="title">
+    <div>
+      <h1>	&#127472;&#127479;  釜山・慶州 8日自由行啦~&#128526</h1>
+      <div class="sub">2026/6/21（日）18:00 抵達 → 2026/6/28（日）19:10 起飛｜6位快樂の大人&#128512</div>
+      <div class="chips">
+        <span class="chip">&#127968 住宿順序：海雲台 3晚 → 慶州 2晚 → 西面 2晚</span>
+        <span class="chip">&#127968 慶州停留：3天（6/24-26）</span>
+        <span class="chip">&#128665 租車：3天（6/24取車 → 6/26還車）</span>
+        <span class="chip">&#128663 釜山市區移動：市區計程車</span>
+      </div>
+
+     <div class="tabs" role="tablist" aria-label="Pages">
+  <div class="tab active" data-page="page-itinerary" role="tab">🗺️ 行程</div>
+  <div class="tab" data-page="page-expenses" role="tab">🧾 費用明細</div>
+  <div class="tab" data-page="page-flights" role="tab">✈️ 班機資訊</div>
+</div>
+
+    </div>
+
+    <div class="toggleRow">
+      <button class="btn primary" id="expandAll">展開全部</button>
+      <button class="btn" id="collapseAll">收合全部</button>
+      <button class="btn good" id="print">列印/存PDF</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- PAGE 1: ITINERARY -->
+  <section class="page active" id="page-itinerary">
+    <div class="grid">
+      <section class="card" id="itineraryCard">
+        <h2>行程總覽 <span class="muted small">（隨時可以機動性調整）</span></h2>
+
+        <details open>
+          <summary>
+            <div class="dayBadge">D1</div>
+            <div>
+              <p class="dayTitle">6/21（日）抵達釜山｜&#11088 休息休息充充電｜海雲台 第1晚</p>
+              <div class="dayMeta">18:00 抵達 → 飯店 → 晚餐 → 休息</div>
+              <div class="pillRow"><span class="pill good">機場飯店接駁(?)</span><span class="pill warn">緩衝日</span></div>
+            </div>
+          </summary>
+          <div class="dayBody">
+            <ul class="bullets">
+              <li>機場 → 海雲台飯店：交通工具待定。</li>
+              <li>&#127860 晚餐 : 待定。(豬肉湯飯?) </li>
+            </ul>
+          </div>
+        </details>
+
+        <details>
+          <summary>
+            <div class="dayBadge">D2</div>
+            <div>
+              <p class="dayTitle">6/22（一）海雲台慢活｜&#11088 釜山PASS｜海雲台 第2晚</p>
+              <div class="dayMeta">看看海，搭搭列車，喝喝咖啡</div>
+              <div class="pillRow"><span class="pill good">單軌列車</span><span class="pill good">夜景</span></div>
+            </div>
+          </summary>
+          <div class="dayBody">
+            <ul class="bullets">
+              <li>海東龍宮寺。</li>
+              <li>Skyline Luge Busan (?)。</li>
+              <li>&#127860 午餐 : 待定。</li>
+              <li>海雲台單軌列車 → 夕陽。</li>
+              <li>&#127860 晚餐 : 待定。</li>
+              <li>The Bay 101 → 釜山夜景。</li>
+            </ul>
+          </div>
+        </details>
+
+        <details>
+          <summary>
+            <div class="dayBadge">D3</div>
+            <div>
+              <p class="dayTitle">6/23（二）釜山人文自然風景｜&#11088 釜山PASS｜海雲台 第3晚</p>
+              <div class="dayMeta">悠悠哉哉的到處走走停停</div>
+              <div class="pillRow"><span class="pill">特色海鮮</span></div>
+            </div>
+          </summary>
+          <div class="dayBody">
+            <ul class="bullets">
+              <li>太宗台 → 小火車看風景。</li>
+              <li>&#127860 午餐 : 待定。</li>
+              <li>&#9749 下午茶 : P.ARK。</li>
+              <li>白淺台文化村 → 釜山影城。</li>
+              <li>&#127860 晚餐 : 札嘎其市場。 (吃帝王蟹&#129408</li>
+
+            </ul>
+          </div>
+        </details>
+
+        <details>
+          <summary>
+            <div class="dayBadge">D4</div>
+            <div>
+              <p class="dayTitle">6/24（三）租車日①：釜山 → 慶州｜&#11088 出發慶州啦｜慶州 第1晚</p>
+              <div class="dayMeta">早上取車後慢慢晃到慶州入住傳統韓屋 </div>
+              <div class="pillRow"><span class="pill warn">租車開始</span><span class="pill good">跨城少轉乘</span></div>
+            </div>
+          </summary>
+          <div class="dayBody">
+            <ul class="bullets">
+              <li>一早先取車後回飯店退房。</li>
+              <li>出發慶州 → 中途休息站 (特色小吃&#127871) 。</li>
+              <li>佛國寺。</li>
+              <li>飯店check in。</li>
+              <li>&#127860 晚餐 : 待定 皇理團路以「坐著聊天＋吃飯」為主。</li>
+              <li>東宮與月池。</li>
+            </ul>
+
+          </div>
+        </details>
+
+        <details>
+          <summary>
+            <div class="dayBadge">D5</div>
+            <div>
+              <p class="dayTitle">6/25（四）租車日②：慶州世界遺跡｜&#11088 歷史文化洗禮｜慶州 第2晚</p>
+              <div class="dayMeta">開車到處探險</div>
+              <div class="pillRow"><span class="pill good">夜景精華</span></div>
+            </div>
+          </summary>
+          <div class="dayBody">
+            <ul class="bullets">
+              <li>大陵苑/瞻星臺周邊。</li>
+              <li>&#127860 午餐/下午茶 : 待定。</li>
+              <li>南韓良洞民俗村 → 世界文化遺產。</li>
+              <li>&#127860 晚餐 : 待定。 </li>
+              <li>月精橋。</li>
+            </ul>
+          </div>
+        </details>
+
+        <details>
+          <summary>
+            <div class="dayBadge">D6</div>
+            <div>
+              <p class="dayTitle">6/26（五）租車日③：慶州 → 釜山西面｜&#11088 回到市區啦｜西面 第1晚</p>
+              <div class="dayMeta"> 慢慢從慶州回釜山還車 → 入住西面</div>
+              <div class="pillRow"><span class="pill warn">還車日</span><span class="pill good">回到釜山不趕</span></div>
+            </div>
+          </summary>
+          <div class="dayBody">
+            <ul class="bullets">
+              <li>出發回釜山 </li>
+              <li>&#127860 午餐/下午茶 : 待定。</li>
+              <li>甘川洞文化村。</li>
+              <li>還車 → 入住西面，飯店check in。</li>
+              <li>&#127860 晚餐：待定 (西面商圈簡單逛、吃、早點休息。</li>
+            </ul>
+          </div>
+        </details>
+
+        <details>
+          <summary>
+            <div class="dayBadge">D7</div>
+            <div>
+              <p class="dayTitle">6/27（六）釜山買買日｜&#11088 再見了錢錢｜西面 第2晚</p>
+              <div class="dayMeta">西面＋（視體力）南浦洞二選一</div>
+              <div class="pillRow"><span class="pill good">購物</span><span class="pill">市區計程車</span></div>
+            </div>
+          </summary>
+          <div class="dayBody">
+            <ul class="bullets">
+              <li>&#127860 午餐/下午茶 : 待定。</li>
+              <li>若精神好再加南浦洞；不然就留在西面最省力。</li>
+              <li>松島海上纜車。</li>
+              <li>&#127860 晚餐 : 待定。</li>
+              <li>以西面為主：逛街、補貨、伴手禮。</li>
+            </ul>
+          </div>
+        </details>
+
+        <details>
+          <summary>
+            <div class="dayBadge">D8</div>
+            <div>
+              <p class="dayTitle">6/28（日）回程日｜&#11088 快樂回家啦｜19:10 起飛</p>
+              <div class="dayMeta">白天放鬆 → 16:00 左右出發去機場</div>
+              <div class="pillRow"><span class="pill good">不趕飛機</span><span class="pill warn">預留車潮</span></div>
+            </div>
+          </summary>
+          <div class="dayBody">
+            <ul class="bullets">
+              <li>白天：西面附近咖啡/最後採買。</li>
+              <li>&#127860 午餐/下午茶 : 待定。</li>
+              <li>下午：計程車/接送到機場(?)。</li>
+            </ul>
+          </div>
+        </details>
+
+
+      </section>
+
+      <aside class="card">
+        <h2>快速備忘</h2>
+        <div class="body">
+          <div class="twoCol">
+            <div class="kv">
+              <div class="k">交通分工</div>
+              <div class="v"><b>市區：</b>市區計程車<br><b>跨城/慶州：</b>租車 3 天</div>
+            </div>
+            <div class="kv">
+              <div class="k">長輩友善關鍵</div>
+              <div class="v">每天 1–2 區<br>下午固定休息段<br>跨城日不塞滿</div>
+            </div>
+          </div>
+          <div class="sep"></div>
+          <div class="notice ok">行程只是概估，隨時可以更動唷~&#128150</div>
+        </div>
+        <div class="foot">開心出遊，安全回家!  &#128513	&#128147</div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- PAGE 2: EXPENSES -->
+  <section class="page" id="page-expenses">
+    <div class="expense-grid">
+      <section class="card">
+        <h2>費用明細（記帳用）<span class="muted small">可填付款人｜租車/市區計程車分開小計</span></h2>
+        <div class="body">
+          <div class="twoCol">
+            <div class="kv">
+              <div class="k">人數（只用來算「每人平均」）</div>
+              <div class="v"><input id="peopleCount" type="number" min="1" value="6" /></div>
+            </div>
+            <div class="kv">
+              <div class="k">幣別顯示</div>
+              <div class="v">
+                <select id="currency">
+                  <option value="₩">₩ 韓元</option>
+                  <option value="NT$">NT$ 台幣</option>
+                  <option value="$">$ 美金</option>
+                  <option value="¥">¥ 日圓</option>
+                  <option value="€">€ 歐元</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="kv">
+            <div class="k">新增一筆費用</div>
+            <div class="v">
+              <div class="twoCol" style="gap:10px">
+                <div>
+                  <label class="small muted">日期</label>
+                  <input id="expDate" type="date" />
+                </div>
+                <div>
+                  <label class="small muted">付款人</label>
+                  <input id="expPayer" type="text" placeholder="例如：我 / 瑜婷 / 媽媽" />
+                </div>
+              </div>
+
+              <div class="twoCol" style="gap:10px; margin-top:10px;">
+                <div>
+                  <label class="small muted">分類（交通細分）</label>
+                  <select id="expCat">
+                    <option>交通-市區計程車</option>
+                    <option>交通-租車</option>
+                    <option>交通-其他</option>
+                    <option>住宿</option>
+                    <option>餐飲</option>
+                    <option>門票/體驗</option>
+                    <option>購物</option>
+                    <option>機票</option>
+                    <option>其他</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="small muted">金額</label>
+                  <input id="expAmount" type="number" min="0" step="1" placeholder="金額" />
+                </div>
+              </div>
+
+              <div style="margin-top:10px;">
+                <label class="small muted">說明</label>
+                <input id="expNote" type="text" placeholder="例如：租車D4取車(釜山) / 還車D6(釜山) / 海雲台→廣安里計程車" />
+              </div>
+
+              <div class="row" style="margin-top:10px;">
+                <button class="btn primary" id="addExpense">＋ 加入</button>
+                <button class="btn" id="addSample">填入範例</button>
+                <button class="btn bad" id="clearAll">清空全部</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="kvs">
+            <div class="kv"><div class="k">總費用</div><div class="v mono" id="sumTotal">₩0</div></div>
+            <div class="kv"><div class="k">每人平均</div><div class="v mono" id="sumPerPerson">₩0</div></div>
+            <div class="kv"><div class="k">市區計程車小計</div><div class="v mono" id="sumTaxi">₩0</div></div>
+            <div class="kv"><div class="k">租車小計</div><div class="v mono" id="sumRental">₩0</div></div>
+            <div class="kv"><div class="k">住宿小計</div><div class="v mono" id="sumHotel">₩0</div></div>
+            <div class="kv"><div class="k">餐飲小計</div><div class="v mono" id="sumFood">₩0</div></div>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="row">
+            <button class="btn good" id="exportJson">匯出備份（JSON）</button>
+            <label class="btn" style="cursor:pointer;">
+              匯入備份
+              <input id="importJson" type="file" accept="application/json" style="display:none;">
+            </label>
+          </div>
+
+          <div class="sep"></div>
+
+          <h3 style="margin:0 0 10px; font-size:14px;">明細列表</h3>
+          <table>
+            <thead>
+              <tr>
+                <th class="nowrap">日期</th>
+                <th class="nowrap">付款人</th>
+                <th class="nowrap">分類</th>
+                <th>說明</th>
+                <th class="right nowrap">金額</th>
+                <th class="center nowrap">刪除</th>
+              </tr>
+            </thead>
+            <tbody id="expenseTbody"></tbody>
+          </table>
+
+          <div class="foot">🔒 資料存在此瀏覽器。換手機/電腦前記得先「匯出備份」。</div>
+        </div>
+      </section>
+
+
+    </div>
+  </section>
+
+<!-- PAGE: FLIGHTS -->
+<section class="page" id="page-flights">
+  <div class="grid">
+    <section class="card">
+      <h2>✈️ 班機詳細資訊</h2>
+      <div class="body">
+
+        <div class="notice ok">
+          每人可攜帶23kg託運大行李，7kg隨身小行李。
+        </div>
+
+        <div class="sep"></div>
+
+        <h3 style="margin:0 0 10px;">&#127775去程｜台北 → 釜山</h3>
+        <div class="kvs">
+          <div class="kv"><div class="k">日期</div><div class="v"><input value="2026/06/21（日）"></div></div>
+          <div class="kv"><div class="k">航班</div><div class="v"><input value="EVA AIR BR 164"></div></div>
+
+          <div class="kv"><div class="k">出發</div><div class="v"><input value="TPE 桃園 T2 14:40"></div></div>
+          <div class="kv"><div class="k">抵達</div><div class="v"><input value="PUS 金海 T1 18:00"></div></div>
+
+          <div class="kv"><div class="k">飛行時間</div><div class="v"><input value="2 小時 20 分"></div></div>
+          <div class="kv"><div class="k">機型</div><div class="v"><input value="Airbus A321"></div></div>
+
+          <div class="kv"><div class="k">艙等</div><div class="v"><input value="經濟艙 / Basic"></div></div>
+          <div class="kv"><div class="k">訂位艙等代碼</div><div class="v"><input value="V"></div></div>
+        </div>
+
+        <div class="sep"></div>
+
+        <h3 style="margin:0 0 10px;">&#127775回程｜釜山 → 台北</h3>
+        <div class="kvs">
+          <div class="kv"><div class="k">日期</div><div class="v"><input value="2026/06/28（日）"></div></div>
+          <div class="kv"><div class="k">航班</div><div class="v"><input value="EVA AIR BR 163"></div></div>
+
+          <div class="kv"><div class="k">出發</div><div class="v"><input value="PUS 金海 T1 19:10"></div></div>
+          <div class="kv"><div class="k">抵達</div><div class="v"><input value="TPE 桃園 T2 20:35"></div></div>
+
+          <div class="kv"><div class="k">飛行時間</div><div class="v"><input value="2 小時 25 分"></div></div>
+          <div class="kv"><div class="k">機型</div><div class="v"><input value="Airbus A321"></div></div>
+
+          <div class="kv"><div class="k">艙等</div><div class="v"><input value="經濟艙 / Basic"></div></div>
+          <div class="kv"><div class="k">訂位艙等代碼</div><div class="v"><input value="V"></div></div>
+        </div>
+
+        <div class="sep"></div>
+
+        <h3>備註</h3>
+        <textarea placeholder="可填：訂位代號、行李公斤數、報到時間、客服電話…"></textarea>
+
+      </div>
+    </section>
+
+    <aside class="card">
+      <h2>⏰ 當天提醒</h2>
+      <div class="body">
+        <div class="notice">
+          去程 14:40 起飛，預估 12:00–12:30 抵達桃園機場。
+        </div>
+        <div class="sep"></div>
+        <div class="notice ok">
+          回程 19:10 起飛，預估 16:30–17:00 抵達金海機場。
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+
+
+</main>
+
+<script>
+  // Tabs
+  const tabs = Array.from(document.querySelectorAll('.tab'));
+  const pages = Array.from(document.querySelectorAll('.page'));
+  function openPage(pageId){
+    pages.forEach(p => p.classList.toggle('active', p.id === pageId));
+    tabs.forEach(t => {
+      const active = t.dataset.page === pageId;
+      t.classList.toggle('active', active);
+      t.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+    const isItinerary = (pageId === 'page-itinerary');
+    document.getElementById('expandAll').style.display = isItinerary ? '' : 'none';
+    document.getElementById('collapseAll').style.display = isItinerary ? '' : 'none';
+  }
+  tabs.forEach(t => t.addEventListener('click', () => openPage(t.dataset.page)));
+
+  // Itinerary controls
+  const detailsList = () => Array.from(document.querySelectorAll('#page-itinerary details'));
+  document.getElementById('expandAll').addEventListener('click', () => detailsList().forEach(d => d.open = true));
+  document.getElementById('collapseAll').addEventListener('click', () => detailsList().forEach(d => d.open = false));
+  document.getElementById('print').addEventListener('click', () => window.print());
+
+  // Expenses storage
+  const STORE_KEY = 'busan_trip_2026_expenses_v2';
+
+  /**
+   * Expense: {date, payer, cat, note, amount}
+   */
+  function formatMoney(symbol, n){
+    const v = Number.isFinite(n) ? n : 0;
+    return symbol + v.toLocaleString('en-US', {maximumFractionDigits: 2});
+  }
+  function todayISO(){
+    const d = new Date();
+    const tz = d.getTimezoneOffset() * 60000;
+    return new Date(d.getTime() - tz).toISOString().slice(0,10);
+  }
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORE_KEY);
+      if(!raw) return { people: 6, currency: '₩', items: [] };
+      const parsed = JSON.parse(raw);
+      return {
+        people: Number(parsed.people) || 6,
+        currency: typeof parsed.currency === 'string' ? parsed.currency : '₩',
+        items: Array.isArray(parsed.items) ? parsed.items : []
+      };
+    }catch{
+      return { people: 6, currency: '₩', items: [] };
+    }
+  }
+  function saveState(state){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+
+  let state = loadState();
+
+  // Bind inputs
+  const peopleCountEl = document.getElementById('peopleCount');
+  const currencyEl = document.getElementById('currency');
+  const expDateEl = document.getElementById('expDate');
+  const expPayerEl = document.getElementById('expPayer');
+  const expCatEl = document.getElementById('expCat');
+  const expNoteEl = document.getElementById('expNote');
+  const expAmountEl = document.getElementById('expAmount');
+  const tbodyEl = document.getElementById('expenseTbody');
+
+  function setDefaults(){
+    peopleCountEl.value = String(state.people);
+    currencyEl.value = state.currency;
+    expDateEl.value = todayISO();
+  }
+  setDefaults();
+
+  function computeSums(items){
+    const sums = {
+      total: 0,
+      perPerson: 0,
+      taxi: 0,
+      rental: 0,
+      hotel: 0,
+      food: 0
+    };
+    for(const it of items){
+      const amt = Number(it.amount) || 0;
+      sums.total += amt;
+
+      if(it.cat === '交通-市區計程車') sums.taxi += amt;
+      else if(it.cat === '交通-租車') sums.rental += amt;
+      else if(it.cat === '住宿') sums.hotel += amt;
+      else if(it.cat === '餐飲') sums.food += amt;
+    }
+    const ppl = Math.max(1, Number(state.people) || 6);
+    sums.perPerson = sums.total / ppl;
+    return sums;
+  }
+
+  function render(){
+    tbodyEl.innerHTML = '';
+    const sym = state.currency;
+
+    state.items
+      .slice()
+      .sort((a,b) => (a.date || '').localeCompare(b.date || ''))
+      .forEach((it) => {
+        const tr = document.createElement('tr');
+
+        const tdDate = document.createElement('td'); tdDate.className = 'nowrap'; tdDate.textContent = it.date || '';
+        const tdPayer = document.createElement('td'); tdPayer.className = 'nowrap'; tdPayer.textContent = it.payer || '';
+        const tdCat = document.createElement('td'); tdCat.className = 'nowrap'; tdCat.textContent = it.cat || '';
+        const tdNote = document.createElement('td'); tdNote.textContent = it.note || '';
+        const tdAmt = document.createElement('td'); tdAmt.className = 'right nowrap mono'; tdAmt.textContent = formatMoney(sym, Number(it.amount) || 0);
+
+        const tdDel = document.createElement('td'); tdDel.className = 'center';
+        const delBtn = document.createElement('button');
+        delBtn.className = 'btn bad';
+        delBtn.style.padding = '6px 10px';
+        delBtn.textContent = '刪';
+        delBtn.addEventListener('click', () => {
+          const idx = state.items.findIndex(x =>
+            x.date===it.date && x.payer===it.payer && x.cat===it.cat && x.note===it.note && Number(x.amount)===Number(it.amount)
+          );
+          if(idx >= 0) state.items.splice(idx, 1);
+          saveState(state);
+          render();
+        });
+        tdDel.appendChild(delBtn);
+
+        tr.append(tdDate, tdPayer, tdCat, tdNote, tdAmt, tdDel);
+        tbodyEl.appendChild(tr);
+      });
+
+    const sums = computeSums(state.items);
+    document.getElementById('sumTotal').textContent = formatMoney(sym, sums.total);
+    document.getElementById('sumPerPerson').textContent = formatMoney(sym, sums.perPerson);
+    document.getElementById('sumTaxi').textContent = formatMoney(sym, sums.taxi);
+    document.getElementById('sumRental').textContent = formatMoney(sym, sums.rental);
+    document.getElementById('sumHotel').textContent = formatMoney(sym, sums.hotel);
+    document.getElementById('sumFood').textContent = formatMoney(sym, sums.food);
+  }
+  render();
+
+  peopleCountEl.addEventListener('change', () => {
+    state.people = Math.max(1, Number(peopleCountEl.value) || 6);
+    saveState(state);
+    render();
+  });
+  currencyEl.addEventListener('change', () => {
+    state.currency = currencyEl.value;
+    saveState(state);
+    render();
+  });
+
+  document.getElementById('addExpense').addEventListener('click', () => {
+    const date = expDateEl.value || todayISO();
+    const payer = (expPayerEl.value || '').trim();
+    const cat = expCatEl.value || '其他';
+    const note = (expNoteEl.value || '').trim();
+    const amount = Number(expAmountEl.value);
+
+    if(!Number.isFinite(amount) || amount < 0){
+      alert('請輸入有效的金額（>= 0）');
+      return;
+    }
+    state.items.push({date, payer, cat, note, amount});
+    saveState(state);
+
+    expNoteEl.value = '';
+    expAmountEl.value = '';
+    render();
+  });
+
+  document.getElementById('addSample').addEventListener('click', () => {
+    const sample = [
+      {date:'2026-06-21', payer:'阿姨', cat:'交通-市區計程車', note:'機場→海雲台（大型計程車）', amount:80000},
+      {date:'2026-06-24', payer:'我', cat:'交通-租車', note:'租車 3天（D4取車→D6還車）', amount:350000},
+      {date:'2026-06-25', payer:'表哥', cat:'門票/體驗', note:'東宮與月池 門票', amount:30000},
+      {date:'2026-06-26', payer:'我', cat:'交通-租車', note:'油費/停車（可拆更多筆）', amount:70000},
+      {date:'2026-06-28', payer:'阿姨', cat:'交通-市區計程車', note:'西面→機場', amount:80000}
+    ];
+    state.items = state.items.concat(sample);
+    saveState(state);
+    render();
+    openPage('page-expenses');
+  });
+
+  document.getElementById('clearAll').addEventListener('click', () => {
+    if(confirm('確定要清空全部費用明細嗎？（可先匯出備份）')){
+      state.items = [];
+      saveState(state);
+      render();
+    }
+  });
+
+  document.getElementById('exportJson').addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'busan_trip_expenses_backup.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById('importJson').addEventListener('change', async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if(!file) return;
+    try{
+      const text = await file.text();
+      const obj = JSON.parse(text);
+      state = {
+        people: Number(obj.people) || 6,
+        currency: typeof obj.currency === 'string' ? obj.currency : '₩',
+        items: Array.isArray(obj.items) ? obj.items : []
+      };
+      saveState(state);
+      setDefaults();
+      render();
+      openPage('page-expenses');
+      alert('匯入完成！');
+    }catch{
+      alert('匯入失敗：檔案格式不正確。');
+    }finally{
+      e.target.value = '';
+    }
+  });
+
+  openPage('page-itinerary');
+</script>
+</body>
+</html>
