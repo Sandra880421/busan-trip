@@ -648,7 +648,9 @@
       taxi: 0,
       rental: 0,
       hotel: 0,
-      food: 0
+      food: 0,
+      ticket: 0,
+      flight: 0
     };
     for(const it of items){
       const amt = Number(it.amount) || 0;
@@ -658,6 +660,8 @@
       else if(it.cat === '交通-租車') sums.rental += amt;
       else if(it.cat === '住宿') sums.hotel += amt;
       else if(it.cat === '餐飲') sums.food += amt;
+      else if(it.cat === '門票/體驗') sums.ticket += amt;
+      else if(it.cat === '機票') sums.flight += amt;
     }
     const ppl = Math.max(1, Number(state.people) || 6);
     sums.perPerson = sums.total / ppl;
@@ -706,6 +710,9 @@
     document.getElementById('sumRental').textContent = formatMoney(sym, sums.rental);
     document.getElementById('sumHotel').textContent = formatMoney(sym, sums.hotel);
     document.getElementById('sumFood').textContent = formatMoney(sym, sums.food);
+    document.getElementById('sumTicket').textContent = formatMoney(sym, sums.ticket);
+    document.getElementById('sumFlight').textContent = formatMoney(sym, sums.flight);
+
   }
   render();
 
@@ -800,6 +807,7 @@
 </script>
 </body>
 </html>
+
 
 
 
